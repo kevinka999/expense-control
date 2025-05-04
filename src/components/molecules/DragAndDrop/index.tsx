@@ -93,7 +93,7 @@ export const DragAndDrop = ({
     state === "idle" && "border-muted-foreground/20",
     state === "dragging" && "border-primary bg-primary/5",
     state === "error" && "border-destructive bg-destructive/5",
-    localFile && "bg-muted/10"
+    localFile && "bg-muted/10",
   );
 
   return (
@@ -106,21 +106,21 @@ export const DragAndDrop = ({
       >
         {!localFile ? (
           <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="rounded-full bg-muted/30 p-4">
-              <Upload className="h-8 w-8 text-muted-foreground" />
+            <div className="bg-muted/30 rounded-full p-4">
+              <Upload className="text-muted-foreground h-8 w-8" />
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">
                 Drag and drop your file here
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 or{" "}
                 <span className="text-primary cursor-pointer">
                   browse files
                 </span>{" "}
                 from your computer
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Supports types: {extensions.join(", ")}
               </p>
             </div>
@@ -145,12 +145,12 @@ export const DragAndDrop = ({
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-muted/30 p-3">
-                <FileSpreadsheet className="h-6 w-6 text-muted-foreground" />
+              <div className="bg-muted/30 rounded-full p-3">
+                <FileSpreadsheet className="text-muted-foreground h-6 w-6" />
               </div>
               <div className="space-y-1 text-left">
                 <h4 className="text-sm font-medium">{localFile.name}</h4>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {(localFile.size / 1024).toFixed(2)} KB ·{" "}
                   {new Date(localFile.lastModified).toLocaleDateString()}
                 </p>
@@ -164,7 +164,7 @@ export const DragAndDrop = ({
       </div>
 
       {errorMessage && (
-        <div className="flex items-center space-x-2 text-destructive bg-destructive/10 p-2 rounded-md">
+        <div className="text-destructive bg-destructive/10 flex items-center space-x-2 rounded-md p-2">
           <AlertCircle className="h-4 w-4" />
           <span className="font-medium">{errorMessage}</span>
         </div>

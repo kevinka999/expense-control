@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -16,10 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Check } from "lucide-react";
 import { Banks } from "@/types";
 import { DragAndDrop } from "@/components/molecules";
 import { LoadingButton } from "@/components/atoms";
+import { useExpenseContext } from "@/context/ExpenseContext";
+import { useNavigate } from "react-router";
 
 type BankInformation = {
   name: string;
@@ -37,20 +37,36 @@ export const Home = () => {
   const [file, setFile] = React.useState<File | null>(null);
   const [isUploading, setIsUploading] = React.useState<boolean>(false);
   const [selectedBank, setSelectedBank] = React.useState<Banks>(
-    Object.values(Banks)[0]
+    Object.values(Banks)[0],
   );
+
+  const { readExpenses, setExpenses } = useExpenseContext();
+  const navigate = useNavigate();
 
   const handleBankChange = (value: Banks) => {
     setSelectedBank(value);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    if (!file) throw new Error("File is required");
+
     setIsUploading(true);
+    readExpenses(selectedBank, file)
+      .then((expenses) => {
+        setExpenses(expenses);
+        navigate("/report");
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsUploading(false);
+      });
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
+    <div className="flex items-center justify-center">
+      <Card className="md:w-3/4 lg:w-2/3 xl:w-1/2">
         <CardHeader>
           <CardTitle>Upload sheet report</CardTitle>
           <CardDescription>
@@ -82,7 +98,7 @@ export const Home = () => {
             </SelectContent>
           </Select>
 
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-sm">
             Select the bank to find out which table model is used for data
             extraction.
           </p>
