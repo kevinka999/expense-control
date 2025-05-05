@@ -1,4 +1,4 @@
-import { Expense } from "@/types";
+import { ChartData, Expense } from "@/types";
 import { categories } from "@/mock";
 import { AlertCircle, RepeatIcon } from "lucide-react";
 import { StatusIndicator } from "@/types";
@@ -15,6 +15,23 @@ export const formatCurrency = (amount: number): string => {
     style: "currency",
     currency: "BRL",
   }).format(amount);
+};
+
+export const getCategoryHexColorByName = (color: string): string => {
+  const colorMap: Record<string, string> = {
+    green: "#10b981",
+    blue: "#3b82f6",
+    orange: "#f97316",
+    purple: "#a855f7",
+    pink: "#ec4899",
+    red: "#ef4444",
+    yellow: "#eab308",
+    teal: "#14b8a6",
+    indigo: "#6366f1",
+    cyan: "#06b6d4",
+    gray: "#6b7280",
+  };
+  return colorMap[color] || colorMap.gray;
 };
 
 export const getCategoryColorByValue = (color: string): string => {
@@ -53,7 +70,7 @@ type StatusIndicatorMap = {
 };
 
 export const getStatusIndicator = (
-  expense: Expense
+  expense: Expense,
 ): StatusIndicator | undefined => {
   if (expense.monthlyRecurring) {
     return StatusIndicator.Monthly;
@@ -86,4 +103,44 @@ export const statusIndicatorMap: StatusIndicatorMap = {
     color: "text-blue-500",
     text: "Monthly",
   },
+};
+
+export const parseExpenseToChartData = (expenses: Expense[]): ChartData[] => {
+  const totalAmount = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0,
+  );
+
+  const expensesByCategory = expenses.reduce<Record<string, number>>(
+    (acc, expense) => {
+      const categoryId = expense.category || "uncategorized";
+      acc[categoryId] = (acc[categoryId] || 0) + expense.amount;
+      return acc;
+    },
+    {},
+  );
+
+  const categoriesWithUncategorized = [
+    ...categories,
+    {
+      id: "uncategorized",
+      name: "Uncategorized",
+      color: "#6b7280",
+    },
+  ];
+
+  const chartData = categoriesWithUncategorized.map((category) => {
+    const categoryId = category.id;
+    const value = expensesByCategory[categoryId] || 0;
+
+    return {
+      id: categoryId,
+      name: category?.name || "Unknown",
+      color: getCategoryColorByValue(category?.color || "#6b7280"),
+      value,
+      percentage: (value / totalAmount) * 100,
+    };
+  });
+
+  return chartData;
 };

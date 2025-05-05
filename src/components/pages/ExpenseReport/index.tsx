@@ -1,12 +1,15 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useExpenseContext } from "@/context/ExpenseContext";
 import { useNavigate } from "react-router";
 import { Expense, StatusIndicator } from "@/types";
-import { formatCurrency, statusIndicatorMap } from "@/lib/utils";
-import { ExpenseTable } from "@/components/organisms";
+import {
+  formatCurrency,
+  parseExpenseToChartData,
+  statusIndicatorMap,
+} from "@/lib/utils";
+import { ColumnChart, ExpenseTable, PieChart } from "@/components/organisms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { categories } from "@/mock";
 import { InputIcon } from "@/components/atoms";
@@ -53,6 +56,8 @@ export const ExpenseReport = () => {
     0,
   );
 
+  const chartData = parseExpenseToChartData(tabFilteredExpenses);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -87,6 +92,19 @@ export const ExpenseReport = () => {
           </TabsTrigger>
         </TabsList>
       </Tabs>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Category Breakdown</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <ColumnChart data={chartData} />
+            <PieChart data={chartData} />
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

@@ -18,8 +18,21 @@ export type Category = {
   color: string;
 };
 
+export type CategoryExpense = Category & {
+  total: number;
+  percentage: number;
+};
+
 export enum StatusIndicator {
   Matched = "matched",
   NeedsVerification = "needs-verification",
   Monthly = "monthly",
 }
+
+export type ChartData = {
+  id: string;
+  name: string;
+  color: string;
+  value: number;
+  percentage: number;
+};
